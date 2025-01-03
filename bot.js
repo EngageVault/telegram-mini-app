@@ -1,4 +1,4 @@
-const webAppUrl = 'https://engagevault.github.io/web-app/';
+const webAppUrl = 'https://engagevault.github.io/web-app';
 
 bot.command('start', (ctx) => {
     ctx.reply('Bienvenue dans EngageVault !', {
