@@ -1,4 +1,4 @@
-const webAppUrl = 'https://web-app-xy4h.onrender.com';
+const webAppUrl = 'https://engagevault.github.io/web-app/';
 
 bot.command('start', (ctx) => {
     ctx.reply('Bienvenue dans EngageVault !', {
