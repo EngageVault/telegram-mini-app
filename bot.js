@@ -40,18 +40,26 @@ bot.on('web_app_data', (ctx) => {
     ctx.reply('Données reçues : ' + ctx.webAppData.data);
 });
 
+// Ajout de logs de diagnostic
+async function checkWebhook() {
+    try {
+        const webhookInfo = await bot.telegram.getWebhookInfo();
+        console.log('Webhook Info:', webhookInfo);
+    } catch (error) {
+        console.error('Erreur webhook:', error);
+    }
+}
+
 // Démarrage du serveur et configuration des webhooks
 async function startServer() {
     try {
-        // D'abord, supprime l'ancien webhook s'il existe
+        await checkWebhook(); // Ajout du diagnostic
         await bot.telegram.deleteWebhook();
-        
-        // Configure le nouveau webhook
         await bot.telegram.setWebhook(`${DOMAIN}/webhook`);
+        await checkWebhook(); // Vérification après configuration
         
-        // Démarre le serveur Express
         app.listen(PORT, () => {
-            console.log(`Serveur et bot démarrés sur le port ${PORT}`);
+            console.log(`Serveur démarré sur ${DOMAIN}`);
         });
     } catch (error) {
         console.error('Erreur au démarrage:', error);
