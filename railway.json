@@ -1,0 +1,13 @@
+{
+  "services": {
+    "bot": {
+      "path": "bot",
+      "startCommand": "node bot.js"
+    },
+    "webapp": {
+      "path": "webapp",
+      "startCommand": "node app.js",
+      "ports": [3000]
+    }
+  }
+} 
