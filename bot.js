@@ -1,7 +1,7 @@
 const { Telegraf } = require('telegraf');
 
-// Utilisation du token depuis les variables d'environnement
 const bot = new Telegraf(process.env.BOT_TOKEN);
+const PORT = process.env.PORT || 3000;
 
 bot.command('start', (ctx) => {
     ctx.reply('Bonjour! Je suis votre bot Telegram.');
@@ -17,17 +17,18 @@ bot.command('webapp', (ctx) => {
     });
 });
 
-// Gestion des erreurs
-bot.catch((err, ctx) => {
-    console.error('Erreur du bot:', err);
+// Utilisation de webhooks au lieu du polling
+bot.launch({
+    webhook: {
+        domain: 'https://telegram-mini-app-production-5463.up.railway.app',
+        port: PORT
+    }
+}).then(() => {
+    console.log('Bot démarré en mode webhook sur le port', PORT);
+}).catch(err => {
+    console.error('Erreur au démarrage:', err);
 });
 
 // Gestion propre de l'arrêt
 process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
-
-// Démarrage du bot avec gestion des erreurs
-bot.launch().catch(err => {
-    console.error('Erreur au lancement du bot:', err);
-    process.exit(1);
-});
