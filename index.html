@@ -12,25 +12,63 @@
             color: var(--tg-theme-text-color);
             background: var(--tg-theme-bg-color);
         }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
         .button {
             background: var(--tg-theme-button-color);
             color: var(--tg-theme-button-text-color);
             border: none;
-            padding: 10px 20px;
+            padding: 12px 24px;
             border-radius: 8px;
             cursor: pointer;
             margin: 10px 0;
+            width: 100%;
+            font-size: 16px;
+        }
+        .card {
+            background: var(--tg-theme-secondary-bg-color);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Ma Mini App Telegram</h1>
-    <button class="button" onclick="webApp.close()">Fermer</button>
+    <div class="container">
+        <div class="header">
+            <h1>Ma Mini App Telegram</h1>
+        </div>
+
+        <div class="card">
+            <h2>Bienvenue!</h2>
+            <p>Ceci est une démonstration de Mini App Telegram.</p>
+        </div>
+
+        <button class="button" onclick="sendMessage()">Envoyer un message</button>
+        <button class="button" onclick="webApp.close()">Fermer</button>
+    </div>
 
     <script>
         const webApp = window.Telegram.WebApp;
         webApp.ready();
         webApp.expand();
+
+        function sendMessage() {
+            webApp.sendData("Hello from WebApp!");
+            // Vous pouvez aussi utiliser MainButton
+            // webApp.MainButton.setText('Envoyé!').show();
+        }
+
+        // Écouter le thème
+        webApp.onEvent('themeChanged', function() {
+            document.body.style.backgroundColor = webApp.backgroundColor;
+        });
     </script>
 </body>
 </html> 
