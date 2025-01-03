@@ -1,14 +1,25 @@
 const { Telegraf } = require('telegraf');
-const bot = new Telegraf('VOTRE_TOKEN_BOT');
 
-// Gestionnaire de commande /start
+// Utilisation du token depuis les variables d'environnement
+const bot = new Telegraf(process.env.BOT_TOKEN);
+
 bot.command('start', (ctx) => {
     ctx.reply('Bonjour! Je suis votre bot Telegram.');
 });
 
-// Gestionnaire de messages
-bot.on('text', (ctx) => {
-    ctx.reply('Message reçu : ' + ctx.message.text);
+bot.command('webapp', (ctx) => {
+    ctx.reply('Accédez à notre webapp :', {
+        reply_markup: {
+            inline_keyboard: [[
+                { text: 'Ouvrir WebApp', web_app: { url: 'https://telegram-mini-app-production-5463.up.railway.app' } }
+            ]]
+        }
+    });
+});
+
+// Gestion des erreurs
+bot.catch((err, ctx) => {
+    console.error('Erreur du bot:', err);
 });
 
 bot.launch();
