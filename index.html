@@ -1,19 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EngageVault</title>
+    <title>Mini App Telegram</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="./style.css">
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="dashboard">
-            <h1>EngageVault</h1>
-            <!-- Votre contenu ici -->
-        </div>
-    </div>
-    <script src="./app.js"></script>
+    <h1>Ma Mini App Telegram</h1>
+    <script>
+        let tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+    </script>
 </body>
 </html> 
