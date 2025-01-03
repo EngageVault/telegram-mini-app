@@ -1,9 +1,19 @@
 const { Telegraf } = require('telegraf');
 const express = require('express');
+const path = require('path');
 
 const app = express();
 const bot = new Telegraf(process.env.BOT_TOKEN);
 const PORT = process.env.PORT || 3000;
+
+// Configuration Express pour servir les fichiers statiques
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.json());
+
+// Route principale
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'index.html'));
+});
 
 // Configuration du bot
 bot.command('start', (ctx) => {
@@ -20,20 +30,12 @@ bot.command('webapp', (ctx) => {
     });
 });
 
-// Configuration Express
-app.use(express.json());
-
-// Route pour la webapp
-app.get('/', (req, res) => {
-    res.sendFile(__dirname + '/index.html');
-});
-
 // Démarrage du serveur
 app.listen(PORT, () => {
     console.log(`Serveur démarré sur le port ${PORT}`);
 });
 
-// Démarrage du bot en mode long polling
+// Démarrage du bot
 bot.launch().catch(err => {
     console.error('Erreur au démarrage du bot:', err);
 });
