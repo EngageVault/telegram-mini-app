@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: telegram-webapp
+    env: static
+    buildCommand: echo "Static site - no build needed"
+    staticPublishPath: ./
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html 

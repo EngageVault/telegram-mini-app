@@ -1,7 +1,7 @@
 {
-  "name": "engagevault-webapp",
+  "name": "telegram-webapp",
   "version": "1.0.0",
-  "description": "EngageVault Telegram WebApp",
+  "description": "Telegram WebApp",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
