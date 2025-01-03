@@ -34,6 +34,12 @@ bot.command('webapp', (ctx) => {
     });
 });
 
+// Ajout de la gestion des données WebApp
+bot.on('web_app_data', (ctx) => {
+    console.log('Données reçues de la webapp:', ctx.webAppData);
+    ctx.reply('Données reçues : ' + ctx.webAppData.data);
+});
+
 // Démarrage du serveur et configuration des webhooks
 async function startServer() {
     try {

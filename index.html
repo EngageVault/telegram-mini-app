@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Telegram Mini App</title>
+    <title>Mini App Test</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -9,66 +9,56 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            color: var(--tg-theme-text-color);
-            background: var(--tg-theme-bg-color);
+            background-color: #f0f2f5;
         }
         .container {
-            max-width: 600px;
+            max-width: 400px;
             margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         .button {
-            background: var(--tg-theme-button-color);
-            color: var(--tg-theme-button-text-color);
+            background-color: #0088cc;
+            color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin: 10px 0;
+            padding: 10px 20px;
+            border-radius: 5px;
             width: 100%;
-            font-size: 16px;
-        }
-        .card {
-            background: var(--tg-theme-secondary-bg-color);
-            padding: 15px;
-            border-radius: 10px;
             margin: 10px 0;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>Ma Mini App Telegram</h1>
-        </div>
-
-        <div class="card">
-            <h2>Bienvenue!</h2>
-            <p>Ceci est une démonstration de Mini App Telegram.</p>
-        </div>
-
-        <button class="button" onclick="sendMessage()">Envoyer un message</button>
-        <button class="button" onclick="webApp.close()">Fermer</button>
+        <h1>Test Mini App</h1>
+        <p>Si vous voyez ce message, l'app fonctionne !</p>
+        <button class="button" onclick="sendData()">Tester l'envoi</button>
+        <button class="button" onclick="closeApp()">Fermer</button>
     </div>
 
     <script>
-        const webApp = window.Telegram.WebApp;
-        webApp.ready();
-        webApp.expand();
-
-        function sendMessage() {
-            webApp.sendData("Hello from WebApp!");
-            // Vous pouvez aussi utiliser MainButton
-            // webApp.MainButton.setText('Envoyé!').show();
+        const tg = window.Telegram.WebApp;
+        
+        // Initialisation
+        tg.ready();
+        
+        // Fonction pour envoyer des données
+        function sendData() {
+            tg.sendData("test");
+            alert("Données envoyées !");
         }
-
-        // Écouter le thème
-        webApp.onEvent('themeChanged', function() {
-            document.body.style.backgroundColor = webApp.backgroundColor;
-        });
+        
+        // Fonction pour fermer l'app
+        function closeApp() {
+            tg.close();
+        }
+        
+        // Afficher un message dans la console pour debug
+        console.log("Mini App chargée");
+        console.log("WebApp Data:", tg);
     </script>
 </body>
 </html> 
