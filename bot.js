@@ -4,16 +4,20 @@ const path = require('path');
 
 const app = express();
 const bot = new Telegraf(process.env.BOT_TOKEN);
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8080;
+const DOMAIN = 'https://telegram-mini-app-production-5463.up.railway.app';
 
-// Configuration Express pour servir les fichiers statiques
+// Configuration Express
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-// Route principale
+// Route pour la webapp
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
+
+// Route pour les webhooks Telegram
+app.use(bot.webhookCallback('/webhook'));
 
 // Configuration du bot
 bot.command('start', (ctx) => {
@@ -24,22 +28,39 @@ bot.command('webapp', (ctx) => {
     ctx.reply('Accédez à notre webapp :', {
         reply_markup: {
             inline_keyboard: [[
-                { text: 'Ouvrir WebApp', web_app: { url: 'https://telegram-mini-app-production-5463.up.railway.app' } }
+                { text: 'Ouvrir WebApp', web_app: { url: DOMAIN } }
             ]]
         }
     });
 });
 
-// Démarrage du serveur
-app.listen(PORT, () => {
-    console.log(`Serveur démarré sur le port ${PORT}`);
-});
+// Démarrage du serveur et configuration des webhooks
+async function startServer() {
+    try {
+        // D'abord, supprime l'ancien webhook s'il existe
+        await bot.telegram.deleteWebhook();
+        
+        // Configure le nouveau webhook
+        await bot.telegram.setWebhook(`${DOMAIN}/webhook`);
+        
+        // Démarre le serveur Express
+        app.listen(PORT, () => {
+            console.log(`Serveur et bot démarrés sur le port ${PORT}`);
+        });
+    } catch (error) {
+        console.error('Erreur au démarrage:', error);
+    }
+}
 
-// Démarrage du bot
-bot.launch().catch(err => {
-    console.error('Erreur au démarrage du bot:', err);
-});
+startServer();
 
 // Gestion propre de l'arrêt
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));
+process.once('SIGINT', () => {
+    bot.telegram.deleteWebhook();
+    process.exit(0);
+});
+
+process.once('SIGTERM', () => {
+    bot.telegram.deleteWebhook();
+    process.exit(0);
+});
