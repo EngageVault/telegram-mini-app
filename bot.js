@@ -22,4 +22,12 @@ bot.catch((err, ctx) => {
     console.error('Erreur du bot:', err);
 });
 
-bot.launch();
+// Gestion propre de l'arrêt
+process.once('SIGINT', () => bot.stop('SIGINT'));
+process.once('SIGTERM', () => bot.stop('SIGTERM'));
+
+// Démarrage du bot avec gestion des erreurs
+bot.launch().catch(err => {
+    console.error('Erreur au lancement du bot:', err);
+    process.exit(1);
+});
