@@ -7,24 +7,36 @@ const bot = new Telegraf(process.env.BOT_TOKEN);
 const PORT = process.env.PORT || 8080;
 const DOMAIN = 'https://telegram-mini-app-production-5463.up.railway.app';
 
+// Middleware pour logger les requêtes
+app.use((req, res, next) => {
+    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
+    next();
+});
+
 // Configuration Express
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
-// Route pour la webapp
+// Route pour la webapp avec log
 app.get('/', (req, res) => {
+    console.log('Page principale demandée');
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Route pour les webhooks Telegram
-app.use(bot.webhookCallback('/webhook'));
+// Route webhook avec log
+app.post('/webhook', (req, res) => {
+    console.log('Webhook reçu:', req.body);
+    bot.handleUpdate(req.body, res);
+});
 
-// Configuration du bot
+// Commandes bot avec logs
 bot.command('start', (ctx) => {
+    console.log('Commande start reçue');
     ctx.reply('Bonjour! Je suis votre bot Telegram.');
 });
 
 bot.command('webapp', (ctx) => {
+    console.log('Commande webapp reçue');
     ctx.reply('Accédez à notre webapp :', {
         reply_markup: {
             inline_keyboard: [[
@@ -34,32 +46,32 @@ bot.command('webapp', (ctx) => {
     });
 });
 
-// Ajout de la gestion des données WebApp
 bot.on('web_app_data', (ctx) => {
-    console.log('Données reçues de la webapp:', ctx.webAppData);
+    console.log('Données webapp reçues:', ctx.webAppData);
     ctx.reply('Données reçues : ' + ctx.webAppData.data);
 });
 
-// Ajout de logs de diagnostic
-async function checkWebhook() {
-    try {
-        const webhookInfo = await bot.telegram.getWebhookInfo();
-        console.log('Webhook Info:', webhookInfo);
-    } catch (error) {
-        console.error('Erreur webhook:', error);
-    }
-}
-
-// Démarrage du serveur et configuration des webhooks
+// Fonction de démarrage améliorée
 async function startServer() {
     try {
-        await checkWebhook(); // Ajout du diagnostic
-        await bot.telegram.deleteWebhook();
-        await bot.telegram.setWebhook(`${DOMAIN}/webhook`);
-        await checkWebhook(); // Vérification après configuration
+        console.log('Démarrage du serveur...');
         
+        // Suppression de l'ancien webhook
+        console.log('Suppression de l\'ancien webhook...');
+        await bot.telegram.deleteWebhook();
+        
+        // Configuration du nouveau webhook
+        console.log('Configuration du nouveau webhook...');
+        await bot.telegram.setWebhook(`${DOMAIN}/webhook`);
+        
+        // Vérification du webhook
+        const webhookInfo = await bot.telegram.getWebhookInfo();
+        console.log('Info webhook:', webhookInfo);
+        
+        // Démarrage du serveur
         app.listen(PORT, () => {
             console.log(`Serveur démarré sur ${DOMAIN}`);
+            console.log(`Port d'écoute: ${PORT}`);
         });
     } catch (error) {
         console.error('Erreur au démarrage:', error);
@@ -68,13 +80,11 @@ async function startServer() {
 
 startServer();
 
-// Gestion propre de l'arrêt
-process.once('SIGINT', () => {
-    bot.telegram.deleteWebhook();
-    process.exit(0);
+// Gestion des erreurs globales
+bot.catch((err, ctx) => {
+    console.error('Erreur bot:', err);
 });
 
-process.once('SIGTERM', () => {
-    bot.telegram.deleteWebhook();
-    process.exit(0);
+process.on('unhandledRejection', (err) => {
+    console.error('Erreur non gérée:', err);
 });
